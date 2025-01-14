@@ -1,0 +1,16 @@
+# Copyright (C) 2025 Anthony Casagrande
+# AGPL-3.0 license
+
+names:
+  0: RC Car
+  1: Short Course Truck
+  2: Stadium Truck
+  3: 1/8 Scale
+  4: Person
+  5: Exalt
+  6: ORCA Blue
+  7: ORCA Orange
+test: roboflow.v3/test/images
+#train: roboflow.v3/train/images
+train: roboflow.v3/train-augmented/images
+val: roboflow.v3/val/images

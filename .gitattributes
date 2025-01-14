@@ -1,0 +1,2 @@
+weights/train29s.pt filter=lfs diff=lfs merge=lfs -text
+videos/rc_demo.mp4 filter=lfs diff=lfs merge=lfs -text

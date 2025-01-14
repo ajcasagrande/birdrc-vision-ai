@@ -1,0 +1,24 @@
+# Ultralytics YOLO 🚀, AGPL-3.0 license
+# Custom YOLO tracker settings for BoT-SORT tracker https://github.com/NirAharon/BoT-SORT
+# Copyright (C) 2025 Anthony Casagrande
+
+tracker_type: botsort # tracker type, ['botsort', 'bytetrack']
+track_high_thresh: 0.1 #
+track_low_thresh: 0.001 #
+new_track_thresh: 0.6 # threshold for init new track if the detection does not match any tracks
+track_buffer:  300 # 30 # buffer to calculate the time when to remove tracks
+match_thresh: 0.99  # 0.99999999 # threshold for matching tracks  (higher number more forgiving)
+match_thresh_second: 0.7
+match_thresh_third: 0.9
+max_reactivation_distance: 20
+fuse_score: True # True # Whether to fuse confidence scores with the iou distances before matching
+# min_box_area: 10  # threshold for min box areas(for tracker evaluation, not used for now)
+
+# BoT-SORT settings
+# 'orb', 'sift', 'ecc', 'sparseOptFlow', 'none'
+gmc_method: none # sparseOptFlow # method of global motion compensation
+
+# ReID model related thresh
+proximity_thresh: 0.99
+appearance_thresh: 0.25
+with_reid: True

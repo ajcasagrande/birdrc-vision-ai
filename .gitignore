@@ -169,3 +169,11 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+.python-version
+
+tracked_cars/
+videos/*.json
+videos/*_out.mp4
+
+.idea/
+
