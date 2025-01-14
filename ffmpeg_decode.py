@@ -60,7 +60,7 @@ class FfmpegVisionProcessor:
     triangle_thickness: int = 4
     save_auto_tracker: bool = False
     auto_tracker_preview: bool = False
-    model_file: str = "weights/train07n.pt"
+    model_file: str = "weights/train29s.pt"
     stabilization_classes: list[str] = field(default_factory=lambda: ['Exalt', 'ORCA Orange', 'ORCA Blue', 'Fridge'])
     primary_stabilization_class: str = "Exalt"
     agnostic_nms: bool = True
