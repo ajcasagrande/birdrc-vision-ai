@@ -32,3 +32,6 @@ python vision_cli.py videos/rc_demo.mp4 \
     --trace_thickness 3
 ```
 
+https://github.com/user-attachments/assets/e65ba6a1-cf31-49fb-b417-fda8304e8868
+
+
