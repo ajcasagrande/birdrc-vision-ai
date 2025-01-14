@@ -1,4 +1,4 @@
-# BirdRC Vision AI
+# RC Race Vision
 RC Car detection using Computer Vision and YOLOv11
 
 ```shell
