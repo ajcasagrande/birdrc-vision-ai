@@ -100,5 +100,7 @@ python vision_cli.py videos/rc_demo.mp4 \
     --conf 0.4
 ```
 
-https://github.com/user-attachments/assets/c434f2e2-ea9d-42cf-8cfb-1cb85f60471f
+https://github.com/user-attachments/assets/b03a142f-2564-4831-9d89-98f76bd5819b
+
+
 
