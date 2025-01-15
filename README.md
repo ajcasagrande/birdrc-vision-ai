@@ -8,6 +8,8 @@ Also, the tracking logic currently is very taxing, and reduces the processing FP
 
 ## Installation
 
+This software requires the use of `ffmpeg`. If you have an Nvidia GPU, make sure you have the nvidia driver, CUDA, and that the version of `ffmpeg` you have includes support for nvidia encoding `hevc_nvenc` and nvidia decoding `hevc_cuvid`.
+
 ```shell
 # Install requirements
 pip install -r requirements.txt
