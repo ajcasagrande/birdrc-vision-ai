@@ -39,10 +39,12 @@ class FfmpegVisionProcessor:
     start_time: float = 0
     end_time: float = 0
     vid_stride: int = 1
-    out_size: tuple[int, int] = _4k
-    yolo_size: tuple[int, int] = _1080p
-    preview_size: tuple[int, int] = _1080p
+    out_size: tuple[int, int] = _720p
+    yolo_size: tuple[int, int] = _720p
+    preview_size: tuple[int, int] = _720p
     use_cuda: bool = None
+    no_track: bool = False
+    tracker_file: str = './trackers/botsort_cfg.yaml'
 
     iou: float =  0.2 # 0.7
     conf: float = 0.01
@@ -54,7 +56,11 @@ class FfmpegVisionProcessor:
     trace_length: int = 50
     trace_thickness: int = 4
     show_box: bool = False
+    box_thickness: int = 2
     show_label: bool = False
+    label_size: int = 2
+    label_text_scale: int = 1
+    label_text_thickness: int = 2
     show_triangle: bool = False
     triangle_size: tuple[int, int] = (50, 50)
     triangle_thickness: int = 4
@@ -215,8 +221,8 @@ class FfmpegVisionProcessor:
             )
             box_annotator = sv.BoxAnnotator(
                 color=color_palette,
-                thickness=2,
-                color_lookup=ColorLookup.TRACK,
+                thickness=self.box_thickness,
+                color_lookup=ColorLookup.CLASS if self.no_track else ColorLookup.TRACK,
             )
             triangle_annotator = sv.TriangleAnnotator(
                 color=color_palette,
@@ -225,12 +231,20 @@ class FfmpegVisionProcessor:
                 color_lookup=ColorLookup.TRACK,
                 outline_thickness=self.triangle_thickness,
             )
-            label_annotator = sv.LabelAnnotator(
+            label_annotator_track = sv.LabelAnnotator(
                 color=color_palette,
                 text_padding=1,
                 color_lookup=ColorLookup.TRACK,
-                text_scale=3,
-                text_thickness=8,
+                text_scale=self.label_text_scale,
+                text_thickness=self.label_text_thickness,
+            )
+            label_annotator = sv.LabelAnnotator(
+                color=sv.ColorPalette.ROBOFLOW,
+                text_padding=1,
+                color_lookup=ColorLookup.CLASS,
+                text_scale=self.label_text_scale,
+                text_thickness=self.label_text_thickness,
+                text_color=sv.Color.BLACK,
             )
             ellipse_annotator = sv.EllipseAnnotator(
                 color=color_palette,
@@ -274,13 +288,19 @@ class FfmpegVisionProcessor:
                 # frame = obb_annotator.annotate(frame.copy(), det)
                 # print(det)
 
-                # Run YOLO inference on the scaled frame
-                results = self._model.track(scaled_frame,
-                                            persist=True,
-                                            conf=self.conf,
-                                            iou=self.iou,
-                                            agnostic_nms=self.agnostic_nms,
-                                            tracker='./trackers/botsort_cfg.yaml')
+                if not self.no_track:
+                    # Run YOLO inference on the scaled frame
+                    results = self._model.track(scaled_frame,
+                                                persist=True,
+                                                conf=self.conf,
+                                                iou=self.iou,
+                                                agnostic_nms=self.agnostic_nms,
+                                                tracker=self.tracker_file)
+                else:
+                    results = self._model(scaled_frame,
+                                          conf=self.conf,
+                                          iou=self.iou,
+                                          agnostic_nms=self.agnostic_nms)
 
                 detections = sv.Detections.from_ultralytics(results[0])
                 if not self.stabilize:
@@ -348,13 +368,31 @@ class FfmpegVisionProcessor:
                                 print(f"Saved lost tracker frame for ID {track_id} to {filename}")
                                 break
 
-
                 if self.stabilize:
                     scaled_frame, shift = self.stabilizer.stabilize_video_frame(scaled_frame, detections)
                     frame = scaled_frame
                     shift_detections(detections, shift)
 
-                if self.show_plot and (self.show_preview or self.save_video) and detections.tracker_id is not None:
+                if self.show_plot and (self.show_preview or self.save_video) and self.no_track:
+                    orig_frame = frame
+                    frame = frame.copy()
+                    if self.show_label:
+                        frame = label_annotator.annotate(
+                            scene=frame,
+                            detections=detections,
+                            labels=[
+                                f"{class_name} {int(confidence*100)}%"
+                                for class_name, confidence
+                                in zip(detections['class_name'], detections.confidence)
+                            ],
+                        )
+                    if self.show_box:
+                        frame = box_annotator.annotate(
+                            scene=frame,
+                            detections=detections
+                        )
+
+                elif self.show_plot and (self.show_preview or self.save_video) and detections.tracker_id is not None:
                     # plot results on the full size frame
                     # annotated_image = vision_utils.plot_scaled_results(
                     #     results[0],
@@ -374,7 +412,7 @@ class FfmpegVisionProcessor:
                             detections=detections
                         )
                     if self.show_label:
-                        frame = label_annotator.annotate(
+                        frame = label_annotator_track.annotate(
                             scene=frame,
                             detections=detections,
                             labels=[
