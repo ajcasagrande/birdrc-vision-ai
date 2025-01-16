@@ -1,5 +1,5 @@
 # RC Race Vision
-RC Car detection using Computer Vision and YOLOv11
+RC Car detection using Computer Vision and YOLOv11. **[Blog Post](https://ajcasagrande.medium.com/your-next-pit-crew-enhancing-rc-racing-with-computer-vision-bee25c494c69)**
 
 ### Notes
 This was designed around being used with an Nvidia GPU, however it potentially will run (albeit much slower) on the CPU if you use `--use-cuda False`.
